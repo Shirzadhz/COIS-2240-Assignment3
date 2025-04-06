@@ -108,7 +108,7 @@ public class RentalSystem {
     
     public void saveVehicle(Vehicle vehicle) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("vehicles.txt", true));) {
-			writer.write(vehicle.getInfo());
+			writer.write("| " + vehicle.getClass().getSimpleName() + " " + vehicle.getInfo());
 	    	writer.close();
 		} catch (IOException e) {
 			System.out.println("Error saving vehicle: " + e.getMessage());
