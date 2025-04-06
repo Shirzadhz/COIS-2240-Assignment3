@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 public class RentalSystem {
     private List<Vehicle> vehicles = new ArrayList<>();
@@ -105,8 +107,7 @@ public class RentalSystem {
     }
     
     public void saveVehicle(Vehicle vehicle) {
-		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter("vehicles.txt", true));
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter("vehicles.txt", true));) {
 			writer.write(vehicle.getInfo());
 	    	writer.close();
 		} catch (IOException e) {
@@ -115,8 +116,7 @@ public class RentalSystem {
     }
     
     public void saveCustomer(Customer customer) {
-    	try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true));
+    	try (BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true));) {
 			writer.write(customer.toString());
 	    	writer.close();
 		} catch (IOException e) {
@@ -125,12 +125,19 @@ public class RentalSystem {
     }
     
     public void saveRecord(RentalRecord record) {
-    	try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true));
+    	try (BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true));) {
 			writer.write(record.toString());
 	    	writer.close();
 		} catch (IOException e) {
 			System.out.println("Error saving record: " + e.getMessage());
 		}
+    }
+    
+    private void loadData() {
+    	try (BufferedReader vehicleReader = new BufferedReader(new FileReader("vehicles.txt"))) {
+    		
+    	} catch (IOException e) {
+    		System.out.println("Error loading vehicles: " + e.getMessage());
+    	}
     }
 }
