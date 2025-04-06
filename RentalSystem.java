@@ -128,7 +128,7 @@ public class RentalSystem {
     public void saveVehicle(Vehicle vehicle) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("vehicles.txt", true));) {
 			writer.write("| " + vehicle.getClass().getSimpleName() + " " + vehicle.getInfo());
-	    	writer.close();
+	    	writer.newLine();
 		} catch (IOException e) {
 			System.out.println("Error saving vehicle: " + e.getMessage());
 		}
@@ -137,7 +137,7 @@ public class RentalSystem {
     public void saveCustomer(Customer customer) {
     	try (BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true));) {
 			writer.write(customer.toString());
-	    	writer.close();
+	    	writer.newLine();
 		} catch (IOException e) {
 			System.out.println("Error saving customer: " + e.getMessage());
 		}
@@ -146,7 +146,7 @@ public class RentalSystem {
     public void saveRecord(RentalRecord record) {
     	try (BufferedWriter writer = new BufferedWriter(new FileWriter("rental_records.txt", true));) {
 			writer.write(record.toString());
-	    	writer.close();
+	    	writer.newLine();
 		} catch (IOException e) {
 			System.out.println("Error saving record: " + e.getMessage());
 		}
