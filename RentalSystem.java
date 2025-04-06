@@ -17,14 +17,28 @@ public class RentalSystem {
     	loadData();
     }
 
-    public void addVehicle(Vehicle vehicle) {
-        vehicles.add(vehicle);
-        saveVehicle(vehicle);
+    public boolean addVehicle(Vehicle vehicle) {
+    	if (findVehicleByPlate(vehicle.getLicensePlate())!=null) {
+    		System.out.println("Error - Vehicle is already added.");
+    		return false;
+    	}
+    	else {
+    		vehicles.add(vehicle);
+            saveVehicle(vehicle);
+            return true;
+    	}
     }
 
-    public void addCustomer(Customer customer) {
-        customers.add(customer);
-        saveCustomer(customer);
+    public boolean addCustomer(Customer customer) {
+    	if (findCustomerById(customer.getCustomerId())!=null) {
+    		System.out.println("Error - Customer already exists.");
+    		return false;
+    	}
+    	else {
+    		customers.add(customer);
+            saveCustomer(customer);
+            return true;
+    	}
     }
 
     public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
@@ -129,7 +143,7 @@ public class RentalSystem {
     }
     
     public void saveRecord(RentalRecord record) {
-    	try (BufferedWriter writer = new BufferedWriter(new FileWriter("customers.txt", true));) {
+    	try (BufferedWriter writer = new BufferedWriter(new FileWriter("rental_records.txt", true));) {
 			writer.write(record.toString());
 	    	writer.close();
 		} catch (IOException e) {
@@ -141,7 +155,7 @@ public class RentalSystem {
     	try (BufferedReader vehicleReader = new BufferedReader(new FileReader("vehicles.txt"))) {
     		String line;
     		while ((line = vehicleReader.readLine()) != null) {
-    			String[] info = line.split("| ");
+    			String[] info = line.split("\\| ");
     			String type = info[0].trim();
     			String licensePlate = info[1].trim();
     			String make = info[2].trim();
@@ -189,7 +203,7 @@ public class RentalSystem {
     	try (BufferedReader customerReader = new BufferedReader(new FileReader("customers.txt"))) {
     		String line;
     		while ((line = customerReader.readLine()) != null) {
-    			String[] info = line.split(" | ");
+    			String[] info = line.split(" \\| ");
     			int customerId = Integer.parseInt(info[0].replace("Customer ID: ", "").trim());
     			String name = info[1].replace("Name: ", "").trim();
     			Customer customer = new Customer(customerId, name);
@@ -198,10 +212,10 @@ public class RentalSystem {
     	} catch (IOException e) {
     		System.out.println("Error loading vehicles: " + e.getMessage());
     	}
-    	try (BufferedReader rentalRecordReader = new BufferedReader(new FileReader("customers.txt"))) {
+    	try (BufferedReader rentalRecordReader = new BufferedReader(new FileReader("rental_records.txt"))) {
     		String line;
     		while ((line = rentalRecordReader.readLine()) != null) {
-    			String[] info = line.split(" | ");
+    			String[] info = line.split(" \\| ");
     			String recordType = info[0].trim();
     			Vehicle vehicle = findVehicleByPlate(info[1].replace("Plate: ", "").trim());
     			Customer customer = findCustomerByName(info[2].replace("Customer: ", "").trim());
