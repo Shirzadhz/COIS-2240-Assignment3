@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.File;
 
 public class RentalSystem {
     private List<Vehicle> vehicles = new ArrayList<>();
@@ -152,6 +153,17 @@ public class RentalSystem {
     }
     
     private void loadData() {
+    	File vFile = new File("vehicles.txt");
+    	File cFile = new File("customers.txt");
+    	File rFile = new File("rental_records.txt");
+    	try {
+    		if (vFile.exists()==false) {
+        		vFile.createNewFile();
+        	}
+    	}
+    	catch (IOException e) {
+    		System.out.println("Error - Cannot create vehicle file.");
+    	}
     	try (BufferedReader vehicleReader = new BufferedReader(new FileReader("vehicles.txt"))) {
     		String line;
     		while ((line = vehicleReader.readLine()) != null) {
@@ -200,6 +212,14 @@ public class RentalSystem {
     	} catch (IOException e) {
     		System.out.println("Error loading vehicles: " + e.getMessage());
     	}
+    	try {
+    		if (cFile.exists()==false) {
+        		cFile.createNewFile();
+        	}
+    	}
+    	catch (IOException e) {
+    		System.out.println("Error - Cannot create customer file.");
+    	}
     	try (BufferedReader customerReader = new BufferedReader(new FileReader("customers.txt"))) {
     		String line;
     		while ((line = customerReader.readLine()) != null) {
@@ -210,7 +230,15 @@ public class RentalSystem {
     			customers.add(customer);
     		}
     	} catch (IOException e) {
-    		System.out.println("Error loading vehicles: " + e.getMessage());
+    		System.out.println("Error loading customers: " + e.getMessage());
+    	}
+    	try {
+    		if (rFile.exists()==false) {
+        		rFile.createNewFile();
+        	}
+    	}
+    	catch (IOException e) {
+    		System.out.println("Error - Cannot create rental records file.");
     	}
     	try (BufferedReader rentalRecordReader = new BufferedReader(new FileReader("rental_records.txt"))) {
     		String line;
