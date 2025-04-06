@@ -202,11 +202,11 @@ public class RentalSystem {
     		String line;
     		while ((line = rentalRecordReader.readLine()) != null) {
     			String[] info = line.split(" | ");
-    			Vehicle vehicle = findVehicleByPlate(info[0].replace("Plate: ", "").trim());
-    			Customer customer = findCustomerByName(info[1].replace("Customer: ", "").trim());
-    			LocalDate recordDate = LocalDate.parse(info[2].replace("Date: ", "").trim());
-    			double totalAmount = Double.parseDouble(info[3].replace("Amount: $", "").trim());
-    			String recordType = info[4].trim();
+    			String recordType = info[0].trim();
+    			Vehicle vehicle = findVehicleByPlate(info[1].replace("Plate: ", "").trim());
+    			Customer customer = findCustomerByName(info[2].replace("Customer: ", "").trim());
+    			LocalDate recordDate = LocalDate.parse(info[3].replace("Date: ", "").trim());
+    			double totalAmount = Double.parseDouble(info[4].replace("Amount: $", "").trim());
     			RentalRecord rentalRecord = new RentalRecord(vehicle, customer, recordDate, totalAmount, recordType);
     			rentalHistory.addRecord(rentalRecord);
     		}
