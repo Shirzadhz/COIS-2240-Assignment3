@@ -6,6 +6,7 @@ public class RentalSystem {
     private List<Vehicle> vehicles = new ArrayList<>();
     private List<Customer> customers = new ArrayList<>();
     private RentalHistory rentalHistory = new RentalHistory();
+    private static RentalSystem rentalSystem = new RentalSystem();
 
     public void addVehicle(Vehicle vehicle) {
         vehicles.add(vehicle);
@@ -88,5 +89,9 @@ public class RentalSystem {
             if (c.getCustomerName().equalsIgnoreCase(name))
                 return c;
         return null;
+    }
+    
+    public static RentalSystem getInstance() {
+    	return rentalSystem;
     }
 }
