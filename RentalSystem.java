@@ -42,29 +42,33 @@ public class RentalSystem {
     	}
     }
 
-    public void rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
+    public boolean rentVehicle(Vehicle vehicle, Customer customer, LocalDate date, double amount) {
         if (vehicle.getStatus() == Vehicle.VehicleStatus.AVAILABLE) {
             vehicle.setStatus(Vehicle.VehicleStatus.RENTED);
             RentalRecord rentalRecord = new RentalRecord(vehicle, customer, date, amount, "RENT");
             rentalHistory.addRecord(rentalRecord);
             System.out.println("Vehicle rented to " + customer.getCustomerName());
             saveRecord(rentalRecord);
+            return true;
         }
         else {
             System.out.println("Vehicle is not available for renting.");
+            return false;
         }
     }
 
-    public void returnVehicle(Vehicle vehicle, Customer customer, LocalDate date, double extraFees) {
+    public boolean returnVehicle(Vehicle vehicle, Customer customer, LocalDate date, double extraFees) {
         if (vehicle.getStatus() == Vehicle.VehicleStatus.RENTED) {
             vehicle.setStatus(Vehicle.VehicleStatus.AVAILABLE);
             RentalRecord rentalRecord = new RentalRecord(vehicle, customer, date, extraFees, "RETURN");
             rentalHistory.addRecord(rentalRecord);
             System.out.println("Vehicle returned by " + customer.getCustomerName());
             saveRecord(rentalRecord);
+            return true;
         }
         else {
             System.out.println("Vehicle is not rented.");
+            return false;
         }
     }    
 
@@ -127,7 +131,7 @@ public class RentalSystem {
     
     public void saveVehicle(Vehicle vehicle) {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("vehicles.txt", true));) {
-			writer.write("| " + vehicle.getClass().getSimpleName() + " " + vehicle.getInfo());
+			writer.write(vehicle.getClass().getSimpleName() + " " + vehicle.getInfo());
 	    	writer.newLine();
 		} catch (IOException e) {
 			System.out.println("Error saving vehicle: " + e.getMessage());
@@ -167,7 +171,7 @@ public class RentalSystem {
     	try (BufferedReader vehicleReader = new BufferedReader(new FileReader("vehicles.txt"))) {
     		String line;
     		while ((line = vehicleReader.readLine()) != null) {
-    			String[] info = line.split("\\| ");
+    			String[] info = line.split("\\|");
     			String type = info[0].trim();
     			String licensePlate = info[1].trim();
     			String make = info[2].trim();
@@ -176,11 +180,11 @@ public class RentalSystem {
     			Vehicle.VehicleStatus status = Vehicle.VehicleStatus.valueOf(info[5].trim());
     			Vehicle vehicle;
     			if (type.equals("Car")) {
-    				int numOfSeats = Integer.parseInt(info[6].trim());
+    				int numOfSeats = Integer.parseInt(info[6].replace("Seats: ", "").trim());
     				vehicle = new Car(make, model, year, numOfSeats);
     			}
     			else if (type.equals("Motorcycle")) {
-    				if (info[6].trim().equals("Yes")) {
+    				if (info[6].replace("Sidecar: ", "").trim().equals("Yes")) {
     					boolean hasSidecar = true;
     					vehicle = new Motorcycle(make, model, year, hasSidecar);
     				}
@@ -190,13 +194,13 @@ public class RentalSystem {
     				}
     			}
     			else if (type.equals("Truck")) {
-    				double cargoCapacity = Double.parseDouble(info[6].trim());
+    				double cargoCapacity = Double.parseDouble(info[6].replace("Cargo Capacity: ", "").trim());
     				vehicle = new Truck(make, model, year, cargoCapacity);
     			}
     			else {
-    				int numOfSeats = Integer.parseInt(info[6].trim());
-    				int horsepower = Integer.parseInt(info[7].trim());
-    				if (info[8].trim().equals("Yes")) {
+    				int numOfSeats = Integer.parseInt(info[6].replace("Seats: ","").trim());
+    				int horsepower = Integer.parseInt(info[7].replace("Turbo", "").trim());
+    				if (info[8].replace("Turbo: ", "").trim().equals("Yes")) {
     					boolean hasTurbo = true;
     					vehicle = new SportCar(make, model, year, numOfSeats, horsepower, hasTurbo);
     				}
@@ -223,7 +227,7 @@ public class RentalSystem {
     	try (BufferedReader customerReader = new BufferedReader(new FileReader("customers.txt"))) {
     		String line;
     		while ((line = customerReader.readLine()) != null) {
-    			String[] info = line.split(" \\| ");
+    			String[] info = line.split("\\|");
     			int customerId = Integer.parseInt(info[0].replace("Customer ID: ", "").trim());
     			String name = info[1].replace("Name: ", "").trim();
     			Customer customer = new Customer(customerId, name);
@@ -243,12 +247,14 @@ public class RentalSystem {
     	try (BufferedReader rentalRecordReader = new BufferedReader(new FileReader("rental_records.txt"))) {
     		String line;
     		while ((line = rentalRecordReader.readLine()) != null) {
-    			String[] info = line.split(" \\| ");
+    			String[] info = line.split("\\|");
     			String recordType = info[0].trim();
-    			Vehicle vehicle = findVehicleByPlate(info[1].replace("Plate: ", "").trim());
-    			Customer customer = findCustomerByName(info[2].replace("Customer: ", "").trim());
+    			String vehiclePlate = info[1].replace("Plate: ", "").trim();
+    			String customerName = info[2].replace("Customer: ", "").trim();
     			LocalDate recordDate = LocalDate.parse(info[3].replace("Date: ", "").trim());
     			double totalAmount = Double.parseDouble(info[4].replace("Amount: $", "").trim());
+    			Vehicle vehicle = findVehicleByPlate(vehiclePlate);
+    			Customer customer = findCustomerByName(customerName);
     			RentalRecord rentalRecord = new RentalRecord(vehicle, customer, recordDate, totalAmount, recordType);
     			rentalHistory.addRecord(rentalRecord);
     		}
