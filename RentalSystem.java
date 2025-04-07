@@ -14,7 +14,7 @@ public class RentalSystem {
     private RentalHistory rentalHistory = new RentalHistory();
     private static RentalSystem rentalSystem = new RentalSystem();
     
-    public RentalSystem() {
+    private RentalSystem() {
     	loadData();
     }
 

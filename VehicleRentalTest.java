@@ -3,6 +3,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDate;
 
 import org.junit.jupiter.api.Test;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 
 class VehicleRentalTest {
 
@@ -51,5 +53,17 @@ class VehicleRentalTest {
 		returned = rental.returnVehicle(vehicle, customer, LocalDate.of(2025, 04, 06), 0);
 		assertFalse(returned, "Vehicle was returned when it wasn't supposed to");
 		
+	}
+	
+	@Test
+	public void testSingletonRentalSystem() {
+		try {
+			Constructor<RentalSystem> constructor = RentalSystem.class.getDeclaredConstructor();
+			int modifiers = constructor.getModifiers();
+			assertEquals(modifiers, Modifier.PRIVATE, "constructor modifiers is not equal to PRIVATE");
+			assertNotNull(RentalSystem.getInstance(), "Instance is null");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
